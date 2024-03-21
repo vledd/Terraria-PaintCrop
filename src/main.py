@@ -1,5 +1,9 @@
+import glob
+import os
+
 from PIL import Image
 from constants import *
+
 
 # TODO we can refactor it using named tuples, would be much better
 
@@ -175,7 +179,17 @@ def process_and_replace_image_in_tileset_by_no(tileset: Image,
                                                tiles_order: TilesetTilesOrder,
                                                frame_img: Image = None,
                                                frame_size_px: int = 0) -> Image:
+    """
 
+    :param tileset:
+    :param image_no:
+    :param src_image:
+    :param img_tile_xy_qty:
+    :param tiles_order:
+    :param frame_img:
+    :param frame_size_px:
+    :return:
+    """
     # Acquire a processed image first
     img_to_replace = process_image_single(src_image, img_tile_xy_qty, frame_img, frame_size_px)
     # Paste it where desired
@@ -188,6 +202,42 @@ def process_and_replace_image_in_tileset_by_no(tileset: Image,
     return tileset
 
 
+def batch_process_replace_images_in_tileset_by_no(src_path: str,
+                                                  tileset: Image,
+                                                  images_no: list,
+                                                  img_tile_xy_qty: tuple[int, int],
+                                                  tiles_order: TilesetTilesOrder,
+                                                  frame_img: Image = None,
+                                                  frame_size_px: int = 0) -> Image:
+    """
+
+    :param src_path:
+    :param tileset:
+    :param images_no:
+    :param img_tile_xy_qty:
+    :param tiles_order:
+    :param frame_img:
+    :param frame_size_px:
+    :return:
+    """
+
+    entries_list = sorted(glob.glob(os.path.join(src_path, "*.jpg")) + glob.glob(os.path.join(src_path, "*.png")))
+
+    # FIXME check for sizes missmatch (not enough photos etc.)
+    for i in range(0, len(images_no)):
+        src_image = Image.open(entries_list[i])
+        tileset = process_and_replace_image_in_tileset_by_no(tileset,
+                                                             images_no[i],
+                                                             src_image,
+                                                             img_tile_xy_qty,
+                                                             tiles_order,
+                                                             frame_img,
+                                                             frame_size_px)
+        src_image.close()
+
+    return tileset
+
+
 # tiles = Image.open("./Tiles_240.png")
 # print(is_selected_zone_empty(tiles, (280, 1900), (32, 16),))
 # print(count_images_qty(tiles, (3, 3)))
@@ -196,8 +246,17 @@ def process_and_replace_image_in_tileset_by_no(tileset: Image,
 
 # To be refactored, for testing please uncomment
 # src = Image.open("../resources/pic/pic1.jpg")
-# frame = Image.open("../resources/frames/frame1.png")
+# frame = Image.open("./resources/frames/frame1.png")
+# batch_process_replace_images_in_tileset_by_no("C:\\",
+#                                               tiles,
+#                                               [0, 2, 3],
+#                                               (3, 3),
+#                                               TilesetTilesOrder.LEFT2RIGHT,
+#                                               frame,
+#                                               1).show()
+
 # process_image_single(src, (2, 3), frame_img=frame, frame_size_px=2).show()
+
 # process_and_replace_image_in_tileset_by_no(tiles,
 #                                            50,
 #                                            src,
