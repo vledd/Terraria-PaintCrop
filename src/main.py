@@ -1,49 +1,53 @@
 from PIL import Image
 from constants import *
 
+# TODO we can refactor it using named tuples, would be much better
 
-def process_image_single(src_img: Image, x_tiles_qty: int, y_tiles_qty: int,
-                         frame_img: Image = None, frame_size_px: int = 0) -> Image:
+
+def process_image_single(src_img: Image,
+                         img_tile_xy_qty: tuple[int, int],
+                         frame_img: Image = None,
+                         frame_size_px: int = 0) -> Image:
     """
     Function to convert + resize single image to the terraria-friendly tiled image.
     You'll need to insert it manually in the place needed
     :param src_img: Input image to process
-    :param x_tiles_qty: Amount of X tiles (Image Width)
-    :param y_tiles_qty: Amount of Y tiles (Image Height)
+    :param img_tile_xy_qty: Amount of X and Y tiles (Image Width and Height)
     :param frame_img: Transparent image of a frame
     :param frame_size_px:
     :return: Processed image
     """
 
     # Resize the source (input) image to the desired size
-    img_resized = src_img.resize((TILE_SIZE_PX * x_tiles_qty - (frame_size_px * 2),
-                                 TILE_SIZE_PX * y_tiles_qty - (frame_size_px * 2)),
+    img_resized = src_img.resize((TILE_SIZE_PX * img_tile_xy_qty[0] - (frame_size_px * 2),
+                                 TILE_SIZE_PX * img_tile_xy_qty[1] - (frame_size_px * 2)),
                                  Image.Resampling.BILINEAR,
                                  None,
                                  3.0)
 
     # Resize frame input image to the size according to the tiles qty
-    frame_img_resized = frame_img.resize((TILE_SIZE_PX * x_tiles_qty,
-                                         TILE_SIZE_PX * y_tiles_qty),
+    frame_img_resized = frame_img.resize((TILE_SIZE_PX * img_tile_xy_qty[0],
+                                         TILE_SIZE_PX * img_tile_xy_qty[1]),
                                          Image.Resampling.BILINEAR,
                                          None,
                                          3.0)
 
     # Image used to merge source image and the frame
     img_merged = Image.new("RGBA",
-                           (TILE_SIZE_PX * x_tiles_qty, TILE_SIZE_PX * y_tiles_qty),
+                           (TILE_SIZE_PX * img_tile_xy_qty[0], TILE_SIZE_PX * img_tile_xy_qty[1]),
                            (255, 255, 255, 0))
     img_merged.paste(img_resized, (frame_size_px, frame_size_px))
     img_merged.paste(frame_img_resized, (0, 0), mask=frame_img_resized)
 
     # Create a new image (without additional borders since this is a single image function)
     img_out = Image.new("RGBA",
-                        ((TILE_SIZE_OFFSET_PX * x_tiles_qty) - 2, (TILE_SIZE_OFFSET_PX * y_tiles_qty) - 2),
+                        ((TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0]) - 2,
+                         (TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]) - 2),
                         (255, 255, 255, 0))
 
     # Copy and paste tiles with 2 transparent pixels offset
-    for i in range(0, y_tiles_qty):
-        for j in range(0, x_tiles_qty):
+    for i in range(0, img_tile_xy_qty[1]):
+        for j in range(0, img_tile_xy_qty[0]):
             pos_x = TILE_SIZE_PX * i
             pos_y = TILE_SIZE_PX * j
             img_cropped = img_merged.crop((pos_y, pos_x, pos_y + TILE_SIZE_PX, pos_x + TILE_SIZE_PX))
@@ -72,6 +76,13 @@ def count_images_qty(src_tileset: Image,
 def get_image_coords_px_by_tile_coords(tileset: Image,
                                        img_tile_coords: tuple[int, int],
                                        img_tile_xy_qty: tuple[int, int]) -> int or tuple[int, int]:
+    """
+
+    :param tileset:
+    :param img_tile_coords:
+    :param img_tile_xy_qty:
+    :return:
+    """
 
     max_image_qty: tuple[int, int] = count_images_qty(tileset, img_tile_xy_qty)
     if img_tile_coords[0] not in range(0, max_image_qty[0]) or\
@@ -157,6 +168,26 @@ def is_selected_zone_empty(tileset: Image,
     return True
 
 
+def process_and_replace_image_in_tileset_by_no(tileset: Image,
+                                               image_no: int,
+                                               src_image: Image,
+                                               img_tile_xy_qty: tuple[int, int],
+                                               tiles_order: TilesetTilesOrder,
+                                               frame_img: Image = None,
+                                               frame_size_px: int = 0) -> Image:
+
+    # Acquire a processed image first
+    img_to_replace = process_image_single(src_image, img_tile_xy_qty, frame_img, frame_size_px)
+    # Paste it where desired
+    tileset.paste(img_to_replace,
+                  get_image_coords_px_by_no(tileset,
+                                            image_no,
+                                            img_tile_xy_qty,
+                                            tiles_order))
+
+    return tileset
+
+
 # tiles = Image.open("./Tiles_240.png")
 # print(is_selected_zone_empty(tiles, (280, 1900), (32, 16),))
 # print(count_images_qty(tiles, (3, 3)))
@@ -164,6 +195,13 @@ def is_selected_zone_empty(tileset: Image,
 # print(get_image_coords_px_by_tile_coords(tiles, (2, 1), (3, 3)))
 
 # To be refactored, for testing please uncomment
-# src = Image.open("resources/pic/pic1.jpg")
-# frame = Image.open("resources/frames/frame1.png")
-# process_image_single(src, 2, 3, frame_img=frame, frame_size_px=2).show()
+# src = Image.open("../resources/pic/pic1.jpg")
+# frame = Image.open("../resources/frames/frame1.png")
+# process_image_single(src, (2, 3), frame_img=frame, frame_size_px=2).show()
+# process_and_replace_image_in_tileset_by_no(tiles,
+#                                            50,
+#                                            src,
+#                                            (3, 3),
+#                                            TilesetTilesOrder.LEFT2RIGHT,
+#                                            frame,
+#                                            2)
