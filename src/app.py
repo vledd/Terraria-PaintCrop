@@ -38,6 +38,7 @@ class MainScreenWindow(qtw.QMainWindow):
         self.ui.tile_path_btn.clicked.connect(self.get_tileset_path)
         self.ui.frame_path_btn.clicked.connect(self.get_frame_path)
         self.ui.export_process_images.clicked.connect(self.process_preview)
+        self.ui.export_single_png_btn.clicked.connect(self.process_save_to_folder)
 
         self.ui.tile_qty_xspin.valueChanged.connect(self.update_x_tiles_qty)
         self.ui.tile_qty_yspin.valueChanged.connect(self.update_y_tiles_qty)
@@ -79,24 +80,25 @@ class MainScreenWindow(qtw.QMainWindow):
             self.ui.add_frame_chk.setEnabled(True)
             self.ui.frame_thick_spin.setEnabled(True)
 
-    def process_preview(self):
+    def process_images(self):
         frame_thick = self.ui.frame_thick_spin.value()
         if self.ui.add_frame_chk.isChecked():
             src_frame = Image.open(self.frame[0])
         else:
             src_frame = None
 
+        src_img_list: list = []
+
         if len(self.files[0]) == 1:
             src_img = Image.open(str(self.files[0][0]))
 
-            processed_img = ImageQt(pcrop.process_image_single(src_img,
-                                                               (self.tiles_qty[0], self.tiles_qty[1]),
-                                                               src_frame,
-                                                               frame_thick))
-            self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
-        else:
-            src_img_list: list = []
+            src_img_list.append(pcrop.process_image_single(src_img,
+                                                           (self.tiles_qty[0], self.tiles_qty[1]),
+                                                           src_frame,
+                                                           frame_thick))
 
+            # self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
+        else:
             for i in range(0, len(self.files[0])):
                 img_local = Image.open(self.files[0][i])
                 # Todo frames
@@ -105,8 +107,22 @@ class MainScreenWindow(qtw.QMainWindow):
                                                                frame_thick))
                 img_local.close()
 
-            processed_img = ImageQt(pcrop.create_preview_multiple_images(src_img_list))
-            self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
+        return src_img_list
+
+    def process_preview(self):
+        processed_img = ImageQt(pcrop.create_preview_multiple_images(self.process_images()))
+        self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
+
+    def process_save_to_folder(self):
+        save_folder_path = qtw.QFileDialog.getExistingDirectory(self, "Select directory where to save")
+
+        if save_folder_path == "":
+            qtw.QMessageBox.warning(self, "Export warning", "Please select a valid folder!")
+        else:
+            processed_img_list = self.process_images()
+            for i in range(0, len(processed_img_list)):
+                processed_img_list[i].save(f"{save_folder_path}/export_{i}.png")
+
 
 
     # def show_second(self):
