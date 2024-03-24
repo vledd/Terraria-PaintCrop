@@ -122,6 +122,7 @@ class MainScreenWindow(qtw.QMainWindow):
             processed_img_list = self.process_images()
             for i in range(0, len(processed_img_list)):
                 processed_img_list[i].save(f"{save_folder_path}/export_{i}.png")
+            qtw.QMessageBox.information(self, "Export status", "Image(s) exported OK!")
 
 
 
