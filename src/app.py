@@ -62,20 +62,20 @@ class MainScreenWindow(qtw.QMainWindow):
 
     def get_tileset_path(self):
         self.tileset = qtw.QFileDialog.getOpenFileName(self, "Select Files", filter="Tileset (*.png)")
-        if len(self.files[0]) == 0:
+        if len(self.tileset[0]) == 0:
             self.ui.tile_path_line.setText("No valid tileset provided!")
         else:
-            self.ui.tile_path_line.setText(str(self.files[0]))
+            self.ui.tile_path_line.setText(str(self.tileset[0]))
 
     def get_frame_path(self):
         self.frame = qtw.QFileDialog.getOpenFileName(self, "Select Files", filter="Frame (*.png)")
-        if len(self.files[0]) == 0:
+        if len(self.frame[0]) == 0:
             self.ui.frame_path_line.setText("No valid frame provided!")
             self.ui.add_frame_chk.setEnabled(False)
             self.ui.add_frame_chk.setChecked(False)
             self.ui.frame_thick_spin.setEnabled(False)
         else:
-            self.ui.frame_path_line.setText(str(self.files[0]))
+            self.ui.frame_path_line.setText(str(self.frame[0]))
             self.ui.add_frame_chk.setEnabled(True)
             self.ui.frame_thick_spin.setEnabled(True)
 
