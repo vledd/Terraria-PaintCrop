@@ -261,6 +261,32 @@ def create_preview_multiple_images(images_list: list[Image]) -> Image:
 
     return preview_img
 
+
+def get_image_no_by_coords(tileset: Image,
+                           img_tile_xy_qty: tuple[int, int],
+                           coords: tuple[int, int],
+                           tiles_order: TilesetTilesOrder) -> int:
+    images_qty: tuple[int, int] = count_images_qty(tileset, img_tile_xy_qty)
+    image_no: int = 0
+
+    for i in range(0, images_qty[1]):
+        for j in range(0, images_qty[0]):
+            x_pos: int = j * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0]
+            y_pos: int = i * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]
+            # print(x_pos, end=" ")
+            # print(y_pos)
+            if x_pos <= coords[0] < x_pos + TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0] and \
+                    y_pos <= coords[1] < y_pos + TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]:
+                # print("Found")
+                break
+            else:
+                image_no += 1
+        else:
+            continue
+        break
+
+    return image_no
+
 # tiles = Image.open("./Tiles_240.png")
 # print(is_selected_zone_empty(tiles, (280, 1900), (32, 16),))
 # print(count_images_qty(tiles, (3, 3)))

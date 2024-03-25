@@ -42,7 +42,8 @@ class MainScreenWindow(qtw.QMainWindow):
 
         self.ui.tile_qty_xspin.valueChanged.connect(self.update_x_tiles_qty)
         self.ui.tile_qty_yspin.valueChanged.connect(self.update_y_tiles_qty)
-        # self.ui.tileset_pixmap_lbl.mouseDoubleClickEvent = self.a
+
+        self.ui.tileset_pixmap_lbl.mouseDoubleClickEvent = self.tileset_pixmap_clicked
 
     def update_x_tiles_qty(self, event):
         self.tiles_qty[0] = int(event)
@@ -67,6 +68,8 @@ class MainScreenWindow(qtw.QMainWindow):
             self.ui.tile_path_line.setText("No valid tileset provided!")
         else:
             self.ui.tile_path_line.setText(str(self.tileset[0]))
+            tileset_img = ImageQt(Image.open(self.tileset[0]))
+            self.ui.tileset_pixmap_lbl.setPixmap(qtg.QPixmap.fromImage(tileset_img))
 
     def get_frame_path(self):
         self.frame = qtw.QFileDialog.getOpenFileName(self, "Select Files", filter="Frame (*.png)")
@@ -96,8 +99,6 @@ class MainScreenWindow(qtw.QMainWindow):
                                                            (self.tiles_qty[0], self.tiles_qty[1]),
                                                            src_frame,
                                                            frame_thick))
-
-            # self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
         else:
             for i in range(0, len(self.files[0])):
                 img_local = Image.open(self.files[0][i])
@@ -124,6 +125,13 @@ class MainScreenWindow(qtw.QMainWindow):
                 processed_img_list[i].save(f"{save_folder_path}/export_{i}.png")
             qtw.QMessageBox.information(self, "Export status", "Image(s) exported OK!")
 
+    def tileset_pixmap_clicked(self, event):
+        # TODO finish feature
+        tileset_local = Image.open(self.tileset[0])
+        pcrop.get_image_no_by_coords(tileset_local,
+                                     (self.tiles_qty[0], self.tiles_qty[1]),
+                                     (event.pos().x(), event.pos().y()),
+                                     pcrop.TilesetTilesOrder.LEFT2RIGHT)
 
 
     # def show_second(self):
