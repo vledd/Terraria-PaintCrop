@@ -194,10 +194,11 @@ def process_and_replace_image_in_tileset_by_no(tileset: Image,
     :param frame_size_px:
     :return:
     """
-    # Acquire a processed image first
-    img_to_replace = process_image_single(src_image, img_tile_xy_qty, frame_img, frame_size_px)
+
+    # Acquire a processed image first. FIXME it was edited, please double check
+    # img_to_replace = process_image_single(src_image, img_tile_xy_qty, frame_img, frame_size_px)
     # Paste it where desired
-    tileset.paste(img_to_replace,
+    tileset.paste(src_image,
                   get_image_coords_px_by_no(tileset,
                                             image_no,
                                             img_tile_xy_qty,
@@ -286,6 +287,9 @@ def get_image_no_by_coords(tileset: Image,
         break
 
     return image_no
+
+
+
 
 # tiles = Image.open("./Tiles_240.png")
 # print(is_selected_zone_empty(tiles, (280, 1900), (32, 16),))

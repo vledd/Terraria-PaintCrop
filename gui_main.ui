@@ -423,31 +423,13 @@
             <item>
              <layout class="QVBoxLayout" name="export_single_vlay">
               <property name="spacing">
-               <number>0</number>
+               <number>6</number>
               </property>
               <item>
                <widget class="QLabel" name="export_single_lbl">
                 <property name="text">
                  <string>Export...</string>
                 </property>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="export_process_images">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="font">
-                 <font>
-                  <bold>false</bold>
-                 </font>
-                </property>
-                <property name="text">
-                 <string>Process Image(s) (Preview)</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">buttonGroup</string>
-                </attribute>
                </widget>
               </item>
               <item>
@@ -458,35 +440,16 @@
                 <property name="text">
                  <string>Export Image(s) as .PNG</string>
                 </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">buttonGroup</string>
-                </attribute>
                </widget>
               </item>
               <item>
-               <widget class="QPushButton" name="export_single_preview_btn">
+               <widget class="QPushButton" name="export_tileset_btn">
                 <property name="enabled">
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>Preview in tileset</string>
+                 <string>Export tileset as .PNG</string>
                 </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">buttonGroup</string>
-                </attribute>
-               </widget>
-              </item>
-              <item>
-               <widget class="QPushButton" name="export_single_insert_btn">
-                <property name="enabled">
-                 <bool>false</bool>
-                </property>
-                <property name="text">
-                 <string>Insert into tileset</string>
-                </property>
-                <attribute name="buttonGroup">
-                 <string notr="true">buttonGroup</string>
-                </attribute>
                </widget>
               </item>
              </layout>
@@ -513,7 +476,7 @@
                  <bool>false</bool>
                 </property>
                 <property name="text">
-                 <string>Bush Putton</string>
+                 <string>Bush Putton (WIP forever... 😿)</string>
                 </property>
                </widget>
               </item>
@@ -625,7 +588,10 @@
                   </spacer>
                  </item>
                  <item>
-                  <widget class="QLabel" name="img_preview_lbl">
+                  <widget class="QLabel" name="img_preview_pixmap_lbl">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>*no preview*</string>
                    </property>
@@ -735,6 +701,9 @@
                  </item>
                  <item>
                   <widget class="QLabel" name="tileset_pixmap_lbl">
+                   <property name="enabled">
+                    <bool>false</bool>
+                   </property>
                    <property name="text">
                     <string>*no tileset*</string>
                    </property>
@@ -829,11 +798,4 @@
  </widget>
  <resources/>
  <connections/>
- <buttongroups>
-  <buttongroup name="buttonGroup">
-   <property name="exclusive">
-    <bool>true</bool>
-   </property>
-  </buttongroup>
- </buttongroups>
 </ui>

@@ -8,7 +8,7 @@ from PyQt6 import QtCore as qtc
 from PyQt6 import QtGui as qtg
 from PyQt6 import QtWidgets as qtw
 
-from PIL import Image
+from PIL import Image, ImageDraw
 from PIL.ImageQt import ImageQt
 
 import pcrop_helpers as pcrop
@@ -27,8 +27,15 @@ class MainScreenWindow(qtw.QMainWindow):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.frame = None
-        self.tileset = None
-        self.files = None
+        self.tileset_pth = None
+        self.images_pth = None
+
+        self.preview_tileset_layer0: Image = None
+        self.preview_tileset_layer1: Image = None
+
+        self.preview_image: Image = None
+        self.selected_image_preview: Image = None
+        self.selected_image_preview_temp: Image = None
         self.tiles_qty: list[int, int] = [1, 1]
 
         self.ui = Ui_MainScreen()
@@ -37,38 +44,52 @@ class MainScreenWindow(qtw.QMainWindow):
         self.ui.img_path_btn.clicked.connect(self.get_image_path)
         self.ui.tile_path_btn.clicked.connect(self.get_tileset_path)
         self.ui.frame_path_btn.clicked.connect(self.get_frame_path)
-        self.ui.export_process_images.clicked.connect(self.process_preview)
         self.ui.export_single_png_btn.clicked.connect(self.process_save_to_folder)
+        self.ui.export_tileset_btn.clicked.connect(self.tileset_save)
 
         self.ui.tile_qty_xspin.valueChanged.connect(self.update_x_tiles_qty)
         self.ui.tile_qty_yspin.valueChanged.connect(self.update_y_tiles_qty)
 
-        self.ui.tileset_pixmap_lbl.mouseDoubleClickEvent = self.tileset_pixmap_clicked
+        self.ui.tileset_pixmap_lbl.mousePressEvent = self.tileset_pixmap_clicked
+        self.ui.img_preview_pixmap_lbl.mouseDoubleClickEvent = self.img_preview_pixmap_clicked
 
     def update_x_tiles_qty(self, event):
         self.tiles_qty[0] = int(event)
+        if self.images_pth is not None:
+            self.process_preview()
 
     def update_y_tiles_qty(self, event):
         self.tiles_qty[1] = int(event)
+        if self.images_pth is not None:
+            self.process_preview()
 
     def get_image_path(self):
-        self.files = qtw.QFileDialog.getOpenFileNames(self, "Select Files", filter="Image files (*.jpg *.png)")
-        if len(self.files[0]) == 0:
+        self.images_pth = qtw.QFileDialog.getOpenFileNames(self, "Select Files", filter="Image files (*.jpg *.png)")
+        if len(self.images_pth[0]) == 0:
             self.ui.img_path_line.setText("No valid file provided!")
-            for button in self.ui.buttonGroup.buttons():
-                button.setEnabled(False)
+            self.ui.img_preview_pixmap_lbl.setEnabled(False)
+            self.images_pth = None
+            self.selected_image_preview = None
+            self.selected_image_preview_temp = None
+            self.ui.export_single_png_btn.setEnabled(False)
         else:
-            self.ui.img_path_line.setText(str(self.files[0]))
-            for button in self.ui.buttonGroup.buttons():
-                button.setEnabled(True)
+            self.ui.img_path_line.setText(str(self.images_pth[0]))
+            self.ui.img_preview_pixmap_lbl.setEnabled(True)
+            self.ui.export_single_png_btn.setEnabled(True)
+            self.process_preview()
 
     def get_tileset_path(self):
-        self.tileset = qtw.QFileDialog.getOpenFileName(self, "Select Files", filter="Tileset (*.png)")
-        if len(self.tileset[0]) == 0:
+        self.tileset_pth = qtw.QFileDialog.getOpenFileName(self, "Select Files", filter="Tileset (*.png)")
+        if len(self.tileset_pth[0]) == 0:
             self.ui.tile_path_line.setText("No valid tileset provided!")
+            self.ui.export_tileset_btn.setEnabled(False)
+            self.ui.tileset_pixmap_lbl.setEnabled(False)
         else:
-            self.ui.tile_path_line.setText(str(self.tileset[0]))
-            tileset_img = ImageQt(Image.open(self.tileset[0]))
+            self.ui.tile_path_line.setText(str(self.tileset_pth[0]))
+            self.ui.export_tileset_btn.setEnabled(True)
+            self.ui.tileset_pixmap_lbl.setEnabled(True)
+            self.preview_tileset_layer0 = Image.new("RGBA", Image.open(self.tileset_pth[0]).size)
+            tileset_img = ImageQt(Image.open(self.tileset_pth[0]))
             self.ui.tileset_pixmap_lbl.setPixmap(qtg.QPixmap.fromImage(tileset_img))
 
     def get_frame_path(self):
@@ -92,16 +113,16 @@ class MainScreenWindow(qtw.QMainWindow):
 
         src_img_list: list = []
 
-        if len(self.files[0]) == 1:
-            src_img = Image.open(str(self.files[0][0]))
+        if len(self.images_pth[0]) == 1:
+            src_img = Image.open(str(self.images_pth[0][0]))
 
             src_img_list.append(pcrop.process_image_single(src_img,
                                                            (self.tiles_qty[0], self.tiles_qty[1]),
                                                            src_frame,
                                                            frame_thick))
         else:
-            for i in range(0, len(self.files[0])):
-                img_local = Image.open(self.files[0][i])
+            for i in range(0, len(self.images_pth[0])):
+                img_local = Image.open(self.images_pth[0][i])
                 # Todo frames
                 src_img_list.append(pcrop.process_image_single(img_local, (self.tiles_qty[0], self.tiles_qty[1]),
                                                                src_frame,
@@ -112,7 +133,25 @@ class MainScreenWindow(qtw.QMainWindow):
 
     def process_preview(self):
         processed_img = ImageQt(pcrop.create_preview_multiple_images(self.process_images()))
-        self.ui.img_preview_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
+        self.ui.img_preview_pixmap_lbl.setPixmap(qtg.QPixmap.fromImage(processed_img))
+        self.preview_image = pcrop.create_preview_multiple_images(self.process_images())
+
+
+    def tileset_save(self):
+        if self.tileset_pth is None:
+            return
+
+        tileset_local: Image = Image.open(self.tileset_pth[0])
+        tileset_local.paste(self.preview_tileset_layer0, (0, 0), mask=self.preview_tileset_layer0)
+        save_path = qtw.QFileDialog.getSaveFileName(self,
+                                                           "Select directory where to save tileset",
+                                                           filter="Tileset (*.png)")
+
+        if save_path[0] == "":
+            qtw.QMessageBox.warning(self, "Export warning", "Please select a valid folder!")
+        else:
+            tileset_local.save(save_path[0])
+            qtw.QMessageBox.information(self, "Export status", "Tileset exported OK!")
 
     def process_save_to_folder(self):
         save_folder_path = qtw.QFileDialog.getExistingDirectory(self, "Select directory where to save")
@@ -127,12 +166,63 @@ class MainScreenWindow(qtw.QMainWindow):
 
     def tileset_pixmap_clicked(self, event):
         # TODO finish feature
-        tileset_local = Image.open(self.tileset[0])
-        pcrop.get_image_no_by_coords(tileset_local,
-                                     (self.tiles_qty[0], self.tiles_qty[1]),
-                                     (event.pos().x(), event.pos().y()),
-                                     pcrop.TilesetTilesOrder.LEFT2RIGHT)
+        if self.selected_image_preview is None:
+            return
 
+        tileset_local: Image = Image.open(self.tileset_pth[0])
+
+        selection_no: int = pcrop.get_image_no_by_coords(tileset_local,
+                                                         (self.tiles_qty[0], self.tiles_qty[1]),
+                                                         (event.pos().x(), event.pos().y()),
+                                                         pcrop.TilesetTilesOrder.LEFT2RIGHT)
+
+        if event.button() == qtg.QMouseEvent.button(event).LeftButton:
+            self.preview_tileset_layer0 = (
+                pcrop.process_and_replace_image_in_tileset_by_no(self.preview_tileset_layer0,
+                                                                 selection_no,
+                                                                 self.selected_image_preview,
+                                                                 (self.tiles_qty[0], self.tiles_qty[1]),
+                                                                 pcrop.TilesetTilesOrder.LEFT2RIGHT,
+                                                                 None, 0))  # Todo add frame
+
+        elif event.button() == qtg.QMouseEvent.button(event).RightButton:
+            eraser_img = Image.new("RGBA",
+                                   (self.tiles_qty[0] * pcrop.TILE_SIZE_OFFSET_PX,
+                                    self.tiles_qty[1] * pcrop.TILE_SIZE_OFFSET_PX),
+                                   (0, 0, 0, 0))
+
+            self.preview_tileset_layer0 = (
+                pcrop.process_and_replace_image_in_tileset_by_no(self.preview_tileset_layer0,
+                                                                 selection_no,
+                                                                 eraser_img,
+                                                                 (self.tiles_qty[0], self.tiles_qty[1]),
+                                                                 pcrop.TilesetTilesOrder.LEFT2RIGHT,
+                                                                 None, 0))
+
+        temp_tilseset_preview: Image = tileset_local
+        temp_tilseset_preview.paste(self.preview_tileset_layer0, (0, 0), mask=self.preview_tileset_layer0)
+        temp_tilseset_preview_qt = ImageQt(temp_tilseset_preview)
+        self.ui.tileset_pixmap_lbl.setPixmap(qtg.QPixmap.fromImage(temp_tilseset_preview_qt))
+
+    def img_preview_pixmap_clicked(self, event):
+        selection_no: int = pcrop.get_image_no_by_coords(self.preview_image,
+                                                         (self.tiles_qty[0], self.tiles_qty[1]),
+                                                         (event.pos().x(), event.pos().y()),
+                                                         pcrop.TilesetTilesOrder.LEFT2RIGHT)
+        self.selected_image_preview = self.process_images()[selection_no]
+
+        self.selected_image_preview_temp = Image.new("RGBA",
+                                                     (self.tiles_qty[0] * pcrop.TILE_SIZE_OFFSET_PX - 2,
+                                                      self.tiles_qty[1] * pcrop.TILE_SIZE_OFFSET_PX - 2),
+                                                     (255, 0, 0, 120))
+
+        preview_img_with_selection = self.preview_image.copy()
+        preview_img_with_selection.paste(self.selected_image_preview_temp,
+                                         (selection_no * pcrop.TILE_SIZE_OFFSET_PX * self.tiles_qty[0], 0),
+                                         mask=self.selected_image_preview_temp)
+
+        preview_img_with_selection_qt = ImageQt(preview_img_with_selection)
+        self.ui.img_preview_pixmap_lbl.setPixmap(qtg.QPixmap.fromImage(preview_img_with_selection_qt))
 
     # def show_second(self):
     #     self.window2 = SettingsScreenWindow()
