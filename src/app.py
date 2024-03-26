@@ -150,7 +150,7 @@ class MainScreenWindow(qtw.QMainWindow):
         if save_path[0] == "":
             qtw.QMessageBox.warning(self, "Export warning", "Please select a valid folder!")
         else:
-            tileset_local.save(save_path[0])
+            tileset_local.save(save_path[0], dpi=(96, 96))
             qtw.QMessageBox.information(self, "Export status", "Tileset exported OK!")
 
     def process_save_to_folder(self):
@@ -161,7 +161,7 @@ class MainScreenWindow(qtw.QMainWindow):
         else:
             processed_img_list = self.process_images()
             for i in range(0, len(processed_img_list)):
-                processed_img_list[i].save(f"{save_folder_path}/export_{i}.png")
+                processed_img_list[i].save(f"{save_folder_path}/export_{i}.png", dpi=(96, 96))
             qtw.QMessageBox.information(self, "Export status", "Image(s) exported OK!")
 
     def tileset_pixmap_clicked(self, event):
@@ -233,7 +233,7 @@ class MainScreenWindow(qtw.QMainWindow):
 app = qtw.QApplication([])
 app.setStyle("Fusion")
 widget = MainScreenWindow()
-widget.setWindowTitle("Terraria PaintCrap v0.1")
+widget.setWindowTitle("Terraria PaintCrap v0.5")
 # palette = qtg.QPalette()
 # palette.setColor(qtg.QPalette.ColorRole.Window, qtg.QColor(53, 53, 53))
 # app.setPalette(palette)
