@@ -1,29 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>SecondScreen</class>
- <widget class="QWidget" name="SecondScreen">
+ <class>Splash</class>
+ <widget class="QWidget" name="Splash">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>677</width>
-    <height>408</height>
+    <width>640</width>
+    <height>480</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Form</string>
   </property>
-  <widget class="QPushButton" name="pushButton">
+  <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>260</x>
-     <y>100</y>
-     <width>141</width>
-     <height>161</height>
+     <x>0</x>
+     <y>0</y>
+     <width>631</width>
+     <height>471</height>
     </rect>
    </property>
    <property name="text">
-    <string>PushButton</string>
+    <string>TextLabel</string>
+   </property>
+   <property name="scaledContents">
+    <bool>true</bool>
    </property>
   </widget>
  </widget>

@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>993</width>
-    <height>604</height>
+    <height>595</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -327,7 +327,7 @@
               <item>
                <widget class="QLabel" name="frame_setup_lbl">
                 <property name="text">
-                 <string>Frame setup</string>
+                 <string>Frame setup (WIP but working)</string>
                 </property>
                </widget>
               </item>
@@ -483,6 +483,19 @@
              </layout>
             </item>
             <item>
+             <spacer name="verticalSpacer_5">
+              <property name="orientation">
+               <enum>Qt::Vertical</enum>
+              </property>
+              <property name="sizeHint" stdset="0">
+               <size>
+                <width>20</width>
+                <height>40</height>
+               </size>
+              </property>
+             </spacer>
+            </item>
+            <item>
              <widget class="QLabel" name="mah_bois">
               <property name="enabled">
                <bool>false</bool>
@@ -553,7 +566,7 @@
               <x>0</x>
               <y>0</y>
               <width>645</width>
-              <height>228</height>
+              <height>223</height>
              </rect>
             </property>
             <layout class="QVBoxLayout" name="verticalLayout">
@@ -665,7 +678,7 @@
               <x>0</x>
               <y>0</y>
               <width>645</width>
-              <height>227</height>
+              <height>223</height>
              </rect>
             </property>
             <layout class="QGridLayout" name="gridLayout_4">
@@ -786,11 +799,17 @@
    </property>
   </action>
   <action name="actionAbout">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>About</string>
    </property>
   </action>
   <action name="actionHEEEELP_MEEE">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
    <property name="text">
     <string>HEEEELP MEEE!!!</string>
    </property>

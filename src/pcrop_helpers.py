@@ -1,11 +1,20 @@
 import glob
 import os
+import sys
 
 from PIL import Image
 from constants import *
 
 
 # TODO we can refactor it using named tuples, would be much better
+
+def resource_path(relative_path):
+    try:
+        base_path = sys._MEIPASS
+    except Exception:
+        base_path = os.path.abspath(".")
+
+    return os.path.join(base_path, relative_path)
 
 
 def process_image_single(src_img: Image,
@@ -276,7 +285,7 @@ def get_image_no_by_coords(tileset: Image,
 
     for i in range(0, images_qty[i_iter]):
         for j in range(0, images_qty[j_iter]):
-            # Dirty hack
+            # TODO Dirty hack. Please edit later
             x_pos: int = (i if j_iter == 1 else j) * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0]
             y_pos: int = (j if i_iter == 0 else i) * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]
             # print(x_pos, end=" ")
@@ -294,31 +303,18 @@ def get_image_no_by_coords(tileset: Image,
     return image_no
 
 
+def extract_image_from_tileset_by_no(tileset: Image,
+                                     image_no: int,
+                                     img_tile_xy_qty: tuple[int, int],
+                                     tiles_order: TilesetTilesOrder) -> Image:
 
+    x_coord, y_coord = get_image_coords_px_by_no(tileset,
+                                                 image_no,
+                                                 img_tile_xy_qty,
+                                                 tiles_order)
+    x_box = x_coord + (img_tile_xy_qty[0] * TILE_SIZE_OFFSET_PX)
+    y_box = y_coord + (img_tile_xy_qty[1] * TILE_SIZE_OFFSET_PX)
 
-# tiles = Image.open("./Tiles_240.png")
-# print(is_selected_zone_empty(tiles, (280, 1900), (32, 16),))
-# print(count_images_qty(tiles, (3, 3)))
-# get_image_coords_px_by_no(tiles, 1, (3, 3), TilesetTilesOrder.LEFT2RIGHT)
-# print(get_image_coords_px_by_tile_coords(tiles, (2, 1), (3, 3)))
+    region_cropped = tileset.crop((x_coord, y_coord, x_box, y_box))
 
-# To be refactored, for testing please uncomment
-# src = Image.open("../resources/pic/pic1.jpg")
-# frame = Image.open("./resources/frames/frame1.png")
-# batch_process_replace_images_in_tileset_by_no("C:\\",
-#                                               tiles,
-#                                               [0, 2, 3],
-#                                               (3, 3),
-#                                               TilesetTilesOrder.LEFT2RIGHT,
-#                                               frame,
-#                                               1).show()
-
-# process_image_single(src, (2, 3), frame_img=frame, frame_size_px=2).show()
-
-# process_and_replace_image_in_tileset_by_no(tiles,
-#                                            50,
-#                                            src,
-#                                            (3, 3),
-#                                            TilesetTilesOrder.LEFT2RIGHT,
-#                                            frame,
-#                                            2)
+    return region_cropped
