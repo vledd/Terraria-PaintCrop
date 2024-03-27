@@ -29,8 +29,6 @@ def process_image_single(src_img: Image,
                                  None,
                                  3.0)
 
-
-
     # Image used to merge source image and the frame
     img_merged = Image.new("RGBA",
                            (TILE_SIZE_PX * img_tile_xy_qty[0], TILE_SIZE_PX * img_tile_xy_qty[1]),
@@ -45,7 +43,6 @@ def process_image_single(src_img: Image,
                                              None,
                                              3.0)
         img_merged.paste(frame_img_resized, (0, 0), mask=frame_img_resized)
-
 
     # Create a new image (without additional borders since this is a single image function)
     img_out = Image.new("RGBA",
@@ -270,10 +267,18 @@ def get_image_no_by_coords(tileset: Image,
     images_qty: tuple[int, int] = count_images_qty(tileset, img_tile_xy_qty)
     image_no: int = 0
 
-    for i in range(0, images_qty[1]):
-        for j in range(0, images_qty[0]):
-            x_pos: int = j * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0]
-            y_pos: int = i * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]
+    if tiles_order == TilesetTilesOrder.LEFT2RIGHT:
+        i_iter: int = 1
+        j_iter: int = 0
+    else:
+        i_iter: int = 0
+        j_iter: int = 1
+
+    for i in range(0, images_qty[i_iter]):
+        for j in range(0, images_qty[j_iter]):
+            # Dirty hack
+            x_pos: int = (i if j_iter == 1 else j) * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0]
+            y_pos: int = (j if i_iter == 0 else i) * TILE_SIZE_OFFSET_PX * img_tile_xy_qty[1]
             # print(x_pos, end=" ")
             # print(y_pos)
             if x_pos <= coords[0] < x_pos + TILE_SIZE_OFFSET_PX * img_tile_xy_qty[0] and \
@@ -285,7 +290,7 @@ def get_image_no_by_coords(tileset: Image,
         else:
             continue
         break
-
+    # print(image_no)
     return image_no
 
 
