@@ -19,6 +19,7 @@ import os
 import sys
 
 
+# Class for showing a Splash and self-destruct after 3 seconds
 class SplashScreen(qtw.QSplashScreen):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -30,6 +31,7 @@ class SplashScreen(qtw.QSplashScreen):
         qtc.QTimer.singleShot(3000, self.close)
 
 
+# Class for showing the "About" window with some text and logo
 class AboutWindow(qtw.QWidget):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -41,6 +43,7 @@ class AboutWindow(qtw.QWidget):
         self.ui.logo.setPixmap(qtg.QPixmap.fromImage(logo_pixmap_qt))
 
 
+# Window with the main software functionality
 class MainScreenWindow(qtw.QMainWindow):
 
     def __init__(self, *args, **kwargs):
@@ -64,7 +67,7 @@ class MainScreenWindow(qtw.QMainWindow):
         self.ui = Ui_MainScreen()
         self.ui.setupUi(self)
 
-
+        # Connect all needed events
         self.ui.img_path_btn.clicked.connect(self.get_image_path)
         self.ui.tile_path_btn.clicked.connect(self.get_tileset_path)
         self.ui.frame_path_btn.clicked.connect(self.get_frame_path)
@@ -84,10 +87,12 @@ class MainScreenWindow(qtw.QMainWindow):
 
     @staticmethod
     def menu_file_exit(self):
+        """Close app"""
         app.closeAllWindows()
         app.exit(0)
 
     def menu_help_clicked(self, event):
+        """Handle help menu actions"""
         if event.text() == "About":
             self.show_about()
         else:

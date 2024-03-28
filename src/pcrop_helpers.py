@@ -91,11 +91,11 @@ def get_image_coords_px_by_tile_coords(tileset: Image,
                                        img_tile_coords: tuple[int, int],
                                        img_tile_xy_qty: tuple[int, int]) -> int or tuple[int, int]:
     """
-
-    :param tileset:
-    :param img_tile_coords:
-    :param img_tile_xy_qty:
-    :return:
+    This function gets image upper-left coordinates by the relative coordinates of the image in tileset
+    :param tileset: Tileset which contains the image
+    :param img_tile_coords: Coordinates of the image in tileset (relative, not in pixels, but in images)
+    :param img_tile_xy_qty: Amount of tiles in image
+    :return: tuple with x and y coordinates
     """
 
     max_image_qty: tuple[int, int] = count_images_qty(tileset, img_tile_xy_qty)
@@ -114,12 +114,12 @@ def get_image_coords_px_by_no(tileset: Image,
                               img_tile_xy_qty: tuple[int, int],
                               tiles_order: TilesetTilesOrder) -> int or tuple[int, int]:
     """
-
-    :param tileset:
+    This function returns the upper-left coordinates of an image in tileset by its number
+    :param tileset: Tileset containing image
     :param image_no: STARTS FROM ZERO be careful
-    :param img_tile_xy_qty:
-    :param tiles_order: TODO maybe auto-detect according to the image aspect ratio
-    :return:
+    :param img_tile_xy_qty: Amount of tiles in image
+    :param tiles_order: How to count number of images (left to right or up to down)
+    :return: tuple with image coordinates [px]
     """
 
     max_image_no: int = count_images_qty(tileset, img_tile_xy_qty)[0] * count_images_qty(tileset, img_tile_xy_qty)[1]
@@ -169,7 +169,7 @@ def is_selected_zone_empty(tileset: Image,
     :param tileset: Image to check
     :param xy_coords: Coordinates to check [px]
     :param dimensions: Dimensions of zone [px]
-    :return:
+    :return: is the image is empty (transparent)
     """
 
     for i in range(xy_coords[0], dimensions[0] + xy_coords[0]):
@@ -190,7 +190,7 @@ def process_and_replace_image_in_tileset_by_no(tileset: Image,
                                                frame_img: Image = None,
                                                frame_size_px: int = 0) -> Image:
     """
-
+    This function creates a processed (split and crop) image and pastes it in the tileset.
     :param tileset:
     :param image_no:
     :param src_image:
@@ -221,7 +221,7 @@ def batch_process_replace_images_in_tileset_by_no(src_path: str,
                                                   frame_img: Image = None,
                                                   frame_size_px: int = 0) -> Image:
     """
-
+    Unused for now. Probably needs refactoring from scratch.
     :param src_path:
     :param tileset:
     :param images_no:
@@ -273,6 +273,15 @@ def get_image_no_by_coords(tileset: Image,
                            img_tile_xy_qty: tuple[int, int],
                            coords: tuple[int, int],
                            tiles_order: TilesetTilesOrder) -> int:
+    """
+    Function to retrieve image number by the coordinates on the tileset [px]
+    :param tileset:
+    :param img_tile_xy_qty:
+    :param coords:
+    :param tiles_order:
+    :return:
+    """
+
     images_qty: tuple[int, int] = count_images_qty(tileset, img_tile_xy_qty)
     image_no: int = 0
 
@@ -307,7 +316,14 @@ def extract_image_from_tileset_by_no(tileset: Image,
                                      image_no: int,
                                      img_tile_xy_qty: tuple[int, int],
                                      tiles_order: TilesetTilesOrder) -> Image:
-
+    """
+    Returns a cropped image from the tileset
+    :param tileset: Tileset containing the image
+    :param image_no: Image number
+    :param img_tile_xy_qty: Amount of tiles in the image
+    :param tiles_order:
+    :return: Extracted region (as PIL Image)
+    """
     x_coord, y_coord = get_image_coords_px_by_no(tileset,
                                                  image_no,
                                                  img_tile_xy_qty,

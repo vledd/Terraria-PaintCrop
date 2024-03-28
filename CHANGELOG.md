@@ -26,5 +26,21 @@ TODO More code comments
 #### Changed
 - Fixed process_image_single autodoc description
 
+### 28.03.2024 GUI Update
+####
+Finally added GUI and created a working implementation of this software.
+Tested on Windows and Linux distributions, should work on MacOS as well.
+Got rid of many bugs which were found in testing process.
+#### Added
+- Many new helper functions
+- GUI
+- Amazing astonishing Splash screen
+- Planned functionality except Batch export and adequate frames
+#### Removed
+- Even more sleep
+- Body hydration
+#### Changed
+- Functions implementations (bugfix)
+
 ## Release version
-Hope to ever see it
+## Soon 🙀

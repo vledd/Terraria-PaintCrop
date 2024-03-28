@@ -2,10 +2,10 @@
 
 
 a = Analysis(
-    ['src\\app.py'],
+    ['src/app.py'],
     pathex=[],
     binaries=[],
-    datas=[('C:\\\\Users\\\\Vlad\\\\PycharmProjects\\\\Terraria_PicEdit\\\\resources_internal\\\\splash_1.jpg', 'resources_internal/')],
+    datas=[('./resources_internal', 'resources_internal')],
     hiddenimports=[],
     hookspath=[],
     hooksconfig={},
