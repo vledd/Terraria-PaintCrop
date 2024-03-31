@@ -13,16 +13,26 @@ the game.
 
 It works with any tileset but best with non-block tilesets (more that 1x1 tile size).
 
+![scr_p.png](resources%2Freadme%2Fscr_p.png)
+
 # Installation
 ## Using pre-built package
 
-You can use our precompiled releases but please note that they 
-will be threaten as malware and will update not so often, so 
-proceed if you want a stable version without the need to build.
+You can [use our precompiled releases](https://github.com/vledd/Terraria-PaintCrop/releases) but please note that they 
+will be threaten as malware, so  proceed if you want a stable version without the need to build it yourself.
 
 For the newest untested updates building from sources is required.
 
-## Building from sources
+# Operation
+
+Please watch this short but very useful video to dive straight into operation of the PaintCrop.
+[![Video Link](https://img.youtube.com/vi/K4GYntnHNDk/0.jpg)](https://youtu.be/K4GYntnHNDk)
+
+Additionally, [you can refer to this guide](USAGE.md) to read almost the same information WITHOUT MODDING GUIDE it text format.
+If it is possible, better watch the video, these 3 minutes will give you full overview of 
+the operating process.
+
+# Building from sources (if you want to)
 Since this software was created only with power of energetic drinks and big enthusiasm,
 we cannot sign resulting packages, so Win Defender and any other similar software will
 treat it as a malware. Thus, building from sources is preferred.
@@ -74,9 +84,6 @@ cd ../../
 Path may to resources_internal (before ":" may vary depending on the platform)
 5. Find your executable file in `dist` folder and run it
 
-# Operation
-
-TODO for now use your heart to operate this software.
 
 # Editing the program
 
