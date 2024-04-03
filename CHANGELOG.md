@@ -27,7 +27,7 @@ TODO More code comments
 - Fixed process_image_single autodoc description
 
 ### 28.03.2024 GUI Update
-####
+
 Finally added GUI and created a working implementation of this software.
 Tested on Windows and Linux distributions, should work on MacOS as well.
 Got rid of many bugs which were found in testing process.
@@ -43,4 +43,12 @@ Got rid of many bugs which were found in testing process.
 - Functions implementations (bugfix)
 
 ## Release version
-## Soon 🙀
+### 03.04.2024 PaintCrop v1.0
+#### Added
+- Stable version of the software
+- Pre-built packages for Windows and Linux
+- Documentation for building and using (with video)
+#### Removed
+- Several bugs
+#### Changed
+- Minor codestyle changes
