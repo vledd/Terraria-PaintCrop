@@ -11,7 +11,7 @@ Terraria PaintCrop is a little crossplatform piece of software written
 in Python that enables users to quickly modify tilesets extracted from
 the game.
 
-It works with any tileset but best with non-block tilesets (more that 1x1 tile size).
+It works with any tileset but used best with non-block tilesets (more that 1x1 tile size).
 
 ![scr_p.png](resources%2Freadme%2Fscr_p.png)
 
@@ -19,28 +19,28 @@ It works with any tileset but best with non-block tilesets (more that 1x1 tile s
 ## Using pre-built package
 
 You can [use our precompiled releases](https://github.com/vledd/Terraria-PaintCrop/releases) but please note that they 
-will be threaten as malware, so  proceed if you want a stable version without the need to build it yourself.
+might be treated as malware, so  proceed if you want a stable version without the need to build it yourself.
 
 For the newest untested updates building from sources is required.
 
 # Operation
 
-Please watch this short but very useful video to dive straight into operation of the PaintCrop.
+Please watch this short but very useful video to dive straight into operation of PaintCrop.
 [![Video Link](https://img.youtube.com/vi/K4GYntnHNDk/0.jpg)](https://youtu.be/K4GYntnHNDk)
 
-Additionally, [you can refer to this guide](USAGE.md) to read almost the same information WITHOUT MODDING GUIDE it text format.
+Additionally, [you can refer to this guide](USAGE.md) to read almost the same information WITHOUT MODDING GUIDE in text format.
 If it is possible, better watch the video, these 3 minutes will give you full overview of 
 the operating process.
 
 # Building from sources (if you want to)
-Since this software was created only with power of energetic drinks and big enthusiasm,
+Since this software was created only with the help of energetic drinks and large enthusiasm,
 we cannot sign resulting packages, so Win Defender and any other similar software will
 treat it as a malware. Thus, building from sources is preferred.
 
 You can easily do it using the Python functionality.
 
 ### Pre-requisites (Skippable)
-You may encounter some errors while building, so probably you want to do some steps first.
+You may encounter some errors while building, so you might want to do some steps first.
 
 #### Windows
 1. Step 2 may fail because your Windows Policy will not allow to run .ps1 scripts to 
@@ -81,13 +81,13 @@ cd ../../
 ```
 3. Execute `pip install -r requirements_build.txt` to get all the packages needed for building.
 4. Execute `pyinstaller --onefile --noconsole --add-data=./resources_internal:resources_internal src/app.py` to build the ELF or EXE file.
-Path may to resources_internal (before ":" may vary depending on the platform)
+Path to resources_internal before ":" may vary depending on the platform.
 5. Find your executable file in `dist` folder and run it
 
 
 # Editing the program
 
-At least for March 2024, pyqt6 tools are too outdated for new PyQt6.
+As for March 2024, pyqt6 tools are too outdated for new PyQt6.
 Thus, for release verions, to have dark mode etc, we are using different requirements file.
 
 If you want to edit this program using Qt Designer etc, please install `requirements_edit.txt` in your venv.
